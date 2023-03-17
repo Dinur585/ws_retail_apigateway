@@ -1,0 +1,18 @@
+# mongo cheat-sheet
+
+docker exec -it ws_retail_apigateway-mongodb-1 bash
+mongosh
+use admin
+db.auth("root", "rootpassword")
+show dbs
+use reach-engine
+db.ItemsCollection.find()
+
+# vault cheat-sheet
+
+docker exec -it ws_retail_apigateway-vault-server-1 sh
+vault login
+# provide token in docker compose file -
+vault-plaintext-root-token
+vault kv put secret/test test.username=test test.password=pwd
+vault kv get secret/test

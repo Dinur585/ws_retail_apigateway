@@ -1,7 +1,0 @@
-docker exec -it ws_retail_apigateway-mongodb-1 bash
-mongosh
-use admin
-db.auth("root", "rootpassword")
-show dbs
-use reach-engine
-db.ItemsCollection.find()

@@ -9,10 +9,12 @@ services:
       - 27018:27017
     volumes:
       - mongodb_data_container:/data/db
+
   mongo-seed:
     build: ./mongo-seed
     depends_on:
       - mongodb
+      
   vault-server:
     image: vault:latest
     ports:
