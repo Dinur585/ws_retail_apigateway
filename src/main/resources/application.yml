@@ -1,0 +1,18 @@
+server:
+  port: 8010
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        #Route Mapping
+        - id: OrderMicroservice
+          uri: http://localhost:8008/
+          predicates:
+            - Path=/api/order/**
+
+          #Route Mapping
+        - id: ItemMicroservice
+          uri: http://localhost:8009/
+          predicates:
+            - Path=/api/item/**
