@@ -14,5 +14,5 @@ docker exec -it ws_retail_apigateway-vault-server-1 sh
 vault login
 # provide token in docker compose file -
 vault-plaintext-root-token
-vault kv put secret/test test.username=test test.password=pwd
+vault kv put secret/test test.username=test@email.com test.password=testpwd
 vault kv get secret/test
