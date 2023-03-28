@@ -1,18 +1,22 @@
-server:
-  port: 8010
 
 spring:
+  application:
+    name: ws-retail-apigateway
+
   cloud:
     gateway:
       routes:
-        #Route Mapping
-        - id: OrderMicroservice
-          uri: http://localhost:8008/
+        - id: ws-retail-orderservice
+          uri: http://ws-retail-orderservice:8008
           predicates:
             - Path=/api/order/**
 
-          #Route Mapping
-        - id: ItemMicroservice
-          uri: http://localhost:8009/
+        - id: ws-retail-itemservice
+          uri: http://ws-retail-itemservice:8009
           predicates:
             - Path=/api/item/**
+
+        - id: ws-retail-authenticationservice
+          uri: http://ws-retail-authenticationservice:8007
+          predicates:
+            - Path=/api/v1/auth/**
