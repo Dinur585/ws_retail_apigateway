@@ -49,6 +49,7 @@ services:
     environment:
       - WS_ITEM_SERVICE=ws-retail-itemservice
       - WS_ORDER_SERVICE=ws-retail-orderservice
+      - WS_AUTH_SERVICE=ws-retail-authenticationservice
       - SPRING_PROFILES_ACTIVE=docker
 
   ws-retail-authenticationservice:
@@ -60,9 +61,10 @@ services:
     networks:
       - micro-service-network
     restart: always
-    depends_on:
-      - mongodb
+    #    depends_on:
+    #      - mongodb
     environment:
+      - WS_API_GATEWAY=ws-retail-apigateway
       - SPRING_PROFILES_ACTIVE:docker
       - SPRING_APPLICATION_NAME:ws-retail-authenticationservice
       - VAULT_ADDR=http://127.0.0.1:8200
