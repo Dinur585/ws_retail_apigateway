@@ -1,3 +1,5 @@
+server:
+  port: 8010
 
 spring:
   application:
@@ -6,15 +8,15 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: ws-retail-orderservice
-          uri: http://ws-retail-orderservice:8008
-          predicates:
-            - Path=/api/order/**
-
         - id: ws-retail-itemservice
           uri: http://ws-retail-itemservice:8009
           predicates:
             - Path=/api/item/**
+
+        - id: ws-retail-orderservice
+          uri: http://ws-retail-orderservice:8008
+          predicates:
+            - Path=/api/order/**
 
         - id: ws-retail-authenticationservice
           uri: http://ws-retail-authenticationservice:8007

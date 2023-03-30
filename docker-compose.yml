@@ -20,11 +20,11 @@ services:
       - micro-service-network
 
   vault-server:
-    image: vault:latest
+    image: vault
     ports:
       - 8200:8200
     environment:
-      VAULT_ADDR: "http://0.0.0.0:8200"
+      VAULT_ADDR: "http://127.0.0.1:8200"
       VAULT_DEV_ROOT_TOKEN_ID: "vault-plaintext-root-token"
     volumes:
       - vaultlogs:/vault/logs
@@ -36,7 +36,6 @@ services:
     networks:
       - micro-service-network
 
-
   ws-retail-apigateway:
     image: ws-retail-apigateway
     build: ./ws_retail_apigateway
@@ -47,29 +46,27 @@ services:
     restart: always
     networks:
       - micro-service-network
-    depends_on:
-      - ws-retail-itemservice
-      - ws-retail-orderservice
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_APPLICATION_NAME: ws-retail-apigateway
-      SPRING_CLOUD_CONFIG_URI: http://localhost:8010
+      - WS_ITEM_SERVICE=ws-retail-itemservice
+      - WS_ORDER_SERVICE=ws-retail-orderservice
+      - SPRING_PROFILES_ACTIVE=docker
 
   ws-retail-authenticationservice:
     image: ws-retail-authenticationservice
     build: ./ws_retail_authenticationservice
     container_name: ws-retail-authenticationservice
     ports:
-      - 8007:8010
-    #    expose:
-    #      - 8007
+      - 8007:8007
     networks:
       - micro-service-network
     restart: always
     depends_on:
-      #      - vault-server
       - mongodb
-
+    environment:
+      - SPRING_PROFILES_ACTIVE:docker
+      - SPRING_APPLICATION_NAME:ws-retail-authenticationservice
+      - VAULT_ADDR=http://127.0.0.1:8200
+      - VAULT_TOKEN=vault-plaintext-root-token
 
   ws-retail-itemservice:
     image: ws-retail-itemservice
@@ -77,22 +74,16 @@ services:
     container_name: ws-retail-itemservice
     ports:
       - 8009:8009
-    #    expose:
-    #      - 8009
     networks:
       - micro-service-network
     restart: always
     depends_on:
       - mongodb
-    #      - vault-server
     environment:
-      - SPRING_PROFILES_ACTIVE:docker
-      - SPRING_DATASOURCE_URL:mongodb://mongodb:27017/reach-engine
-      - SPRING_DATASOURCE_USERNAME:root
-      - SPRING_DATASOURCE_PASSWORD:rootpassword
-      - SPRING_JPA_HIBERNATE_DDL_AUTO:create
-      - SPRING_APPLICATION_NAME:ws-retail-itemservice
-      - SPRING_CLOUD_CONFIG_URI:http://ws-retail-apigateway:8010
+      - MONGO_HOST=mongodb
+    links:
+      - mongodb
+      - ws-retail-apigateway
 
   ws-retail-orderservice:
     image: ws-retail-orderservice
@@ -100,23 +91,17 @@ services:
     container_name: ws-retail-orderservice
     ports:
       - 8008:8008
-    #    expose:
-    #      - 8008
     networks:
       - micro-service-network
     restart: always
     depends_on:
       - mongodb
-    #      - vault-server
     environment:
-      - SPRING_PROFILES_ACTIVE:docker
-      - SPRING_DATASOURCE_URL=mongodb://mongodb:27017/reach-engine
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=rootpassword
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=create
-      - SPRING_APPLICATION_NAME:ws-retail-orderservice
-      - SPRING_CLOUD_CONFIG_URI:http://ws-retail-apigateway:8010
-
+      - MONGO_HOST=mongodb
+      - WS_API_GATEWAY=ws-retail-apigateway
+    links:
+      - mongodb
+      - ws-retail-apigateway
 
   react-app:
     build: ./retail_ui
